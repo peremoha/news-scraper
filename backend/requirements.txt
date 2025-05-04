@@ -6,3 +6,5 @@ graphene
 webdriver-manager
 sqlalchemy
 flask-cors
+flask-jwt-extended
+bcrypt
