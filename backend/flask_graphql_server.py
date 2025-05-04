@@ -72,22 +72,23 @@ class UpdateNews(Mutation):
 
     def mutate(parent, info, id, title=None, body=None, publication_date=None, source_url=None):
         session = Session()
-        news = session.query(News).filter(News.id == id).first()
+        existing_news = session.query(News).filter(News.id == id).first()
 
-        if not news:
+        if not existing_news:
             raise Exception("News item not found!")
 
+        # Часткове оновлення полів
         if title:
-            news.title = title
+            existing_news.title = title
         if body:
-            news.body = body
+            existing_news.body = body
         if publication_date:
-            news.publication_date = publication_date
+            existing_news.publication_date = publication_date
         if source_url:
-            news.source_url = source_url
+            existing_news.source_url = source_url
 
         session.commit()
-        return UpdateNews(news=new_news)
+        return UpdateNews(news=existing_news)
 
 
 class DeleteNews(Mutation):
@@ -98,12 +99,12 @@ class DeleteNews(Mutation):
 
     def mutate(parent, info, id):
         session = Session()
-        news = session.query(News).filter(News.id == id).first()
+        existing_news = session.query(News).filter(News.id == id).first()
 
-        if not news:
+        if not existing_news:
             raise Exception("News item not found!")
 
-        session.delete(news)
+        session.delete(existing_news)
         session.commit()
         return DeleteNews(ok="News item deleted successfully!")
 
