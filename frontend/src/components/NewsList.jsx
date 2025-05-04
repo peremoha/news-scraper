@@ -3,14 +3,13 @@ import { useQuery, gql } from "@apollo/client";
 
 // Запит для отримання всіх новин
 const GET_NEWS = gql`
-query AllNews {
-    allNews {
-        id
-        title
-        body
-        publicationDate
-        sourceUrl
-    }
+query {
+  allNews(limit: 5, offset: 0) {
+    id
+    title
+    publicationDate
+    sourceUrl
+  }
 }
 `;
 

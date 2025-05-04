@@ -17,19 +17,24 @@ class NewsType(ObjectType):
 
 # Запити (Query)
 class Query(ObjectType):
-    # Отримання всіх новин
-    all_news = List(NewsType)
+    # Отримання всіх новин із пагінацією
+    all_news = List(
+        NewsType,
+        limit=Int(),
+        offset=Int()
+    )
 
-    def resolve_all_news(parent, info):
+    def resolve_all_news(parent, info, limit=None, offset=None):
         session = Session()
-        return session.query(News).all()
+        query = session.query(News)
 
-    # Отримання конкретної новини за ID
-    news_by_id = Field(NewsType, id=Int(required=True))
+        # Додаємо обмеження (пагінацію)
+        if limit is not None:
+            query = query.limit(limit)
+        if offset is not None:
+            query = query.offset(offset)
 
-    def resolve_news_by_id(parent, info, id):
-        session = Session()
-        return session.query(News).filter(News.id == id).first()
+        return query.all()
 
 
 # Мутації (Mutation)
