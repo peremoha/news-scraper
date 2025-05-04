@@ -5,3 +5,4 @@ flask-graphql
 graphene
 webdriver-manager
 sqlalchemy
+flask-cors
