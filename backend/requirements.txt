@@ -1,0 +1,7 @@
+selenium
+pika
+flask
+flask-graphql
+graphene
+webdriver-manager
+sqlalchemy
