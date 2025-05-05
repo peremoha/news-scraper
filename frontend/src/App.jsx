@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./components/Login";
-import Register from "./components/Register";
+import Login from "./components/Login_Register/Login";
+import Register from "./components/Login_Register/Register";
 import NewsList from "./components/NewsList/NewsList";
 import { isAuthenticated } from "./utils/auth";
 

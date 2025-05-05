@@ -1,5 +1,17 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
+import {
+  PageContainer,
+  FormContainer,
+  FormTitle,
+  FormField,
+  ErrorMessage,
+  SuccessMessage,
+  LinkText,
+} from "./Login_Register_Styled";
+
+import Button from '../../shared-components/Button/Button'
 
 const Register = () => {
   const navigate = useNavigate(); // Хук для переходу після успішної реєстрації
@@ -35,34 +47,35 @@ const Register = () => {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h2>Register</h2>
-      <form onSubmit={handleRegister} style={{ display: "inline-block", textAlign: "left" }}>
-        <div style={{ marginBottom: "10px" }}>
+    <PageContainer >
+      <FormTitle>Register</FormTitle>
+      <FormContainer ontainer rm onSubmit={handleRegister} >
+        <FormField >
           <label>Username:</label>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            style={{ marginLeft: "10px", padding: "5px" }}
           />
-        </div>
-        <div style={{ marginBottom: "10px" }}>
+        </FormField>
+        <FormField >
           <label>Password:</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ marginLeft: "10px", padding: "5px" }}
           />
-        </div>
-        <button type="submit" style={{ padding: "5px 10px" }}>Register</button>
-      </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
-    </div>
+        </FormField>
+        <Button type="submit" >Register</Button>
+      </FormContainer >
+      {error && <ErrorMessage >{error}</ErrorMessage>}
+      {success && <SuccessMessage >{success}</SuccessMessage>}
+      <LinkText>
+        Already have an account? <Link to="/login">Login here</Link>
+      </LinkText>
+    </PageContainer>
   );
 };
 
