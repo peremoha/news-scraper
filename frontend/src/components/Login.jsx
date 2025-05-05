@@ -33,6 +33,7 @@ const Login = () => {
 
         localStorage.setItem("token", data.access_token);
         localStorage.setItem("role", roleData.role); 
+        localStorage.setItem("username", username);
 
         navigate("/");
       } else {

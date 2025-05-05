@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
-import { logout } from "../utils/auth";
+import { logout } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
-import NewsModal from "./NewsModal";
+import NewsModal from "../NewsModal";
+
+import { Wrapper, NewsContainer, NewsWrapper, Title, Date, ReadMoreBtn, UserNameWrapper, UserNameText } from './NewsList_Styled'
+import { Button } from "../../shared-components/Button/Button_Styled";
 
 // GraphQL-запити та мутації
 const GET_NEWS = gql`
@@ -27,6 +30,7 @@ const DELETE_NEWS = gql`
 const NewsList = () => {
   const navigate = useNavigate();
   const role = localStorage.getItem("role"); // Отримуємо роль із LocalStorage
+  const username = localStorage.getItem("username");
   const [page, setPage] = useState(1);
   const limit = 7;
   const offset = (page - 1) * limit;
@@ -78,64 +82,73 @@ const NewsList = () => {
   };
 
   return (
-    <div>
-      <button onClick={handleLogout} style={{ float: "right", margin: "10px" }}>
-        Logout
-      </button>
+    <Wrapper>
+      <UserNameWrapper>
+        <UserNameText style={{ marginRight: "15px", fontWeight: "bold" }}>
+          {role === "admin" ? `admin - ${username}` : username}
+        </UserNameText>
+        <Button onClick={handleLogout} variant="primary" size="large">
+          Logout
+        </Button>
+      </UserNameWrapper>
+
       <h1>Welcome to News List - Page {page}</h1>
 
       {/* Кнопка для додавання новин (тільки для admin) */}
       {role === "admin" && (
-        <button
-          style={{ marginBottom: "10px", padding: "5px 10px" }}
+        <Button
+          style={{ marginBottom: "10px" }}
           onClick={openModalForCreate}
+          variant="primary"
         >
           Add News
-        </button>
+        </Button>
       )}
 
-      <div>
+      <NewsContainer>
         {data.allNews.map((news) => (
-          <div key={news.id} style={{ marginBottom: "20px" }}>
-            <h2>{news.title}</h2>
-            <p>
+          <NewsWrapper key={news.id}>
+            <Title>{news.title}</Title>
+            <Date>
               <strong>Date:</strong> {news.publicationDate}
-            </p>
-            <a href={news.sourceUrl} target="_blank" rel="noopener noreferrer">
+            </Date>
+            <ReadMoreBtn href={news.sourceUrl} target="_blank" rel="noopener noreferrer">
               Read more
-            </a>
+            </ReadMoreBtn>
 
             {/* Кнопки для редагування та видалення (тільки для admin) */}
             {role === "admin" && (
               <div style={{ marginTop: "10px" }}>
-                <button
-                  style={{ marginRight: "10px", padding: "5px 10px" }}
+                <Button
+                  style={{ marginRight: "10px" }}
                   onClick={() => openModalForEdit(news)}
+                  variant="primary"
                 >
                   Edit
-                </button>
-                <button
-                  style={{ padding: "5px 10px" }}
+                </Button>
+                <Button
+                  variant="danger"
                   onClick={() => handleDelete(news.id)}
                 >
                   Delete
-                </button>
+                </Button>
               </div>
             )}
-          </div>
+          </NewsWrapper>
         ))}
-      </div>
+      </NewsContainer>
       <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <button
+        <Button
           onClick={handlePrevious}
           disabled={page === 1}
           style={{ marginRight: "10px" }}
+          variant="primary"
         >
           Previous
-        </button>
-        <button onClick={handleNext} disabled={data.allNews.length < limit}>
+        </Button>
+        <Button variant="primary" onClick={handleNext} disabled={data.allNews.length < limit}>
           Next
-        </button>
+        </Button>
       </div>
 
       <NewsModal
@@ -144,7 +157,7 @@ const NewsList = () => {
         initialData={initialData}
         refetch={refetch}
       />
-    </div>
+    </Wrapper>
   );
 };
 
