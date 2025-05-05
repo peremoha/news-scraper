@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import NewsList from "./components/NewsList";
+import NewsList from "./components/NewsList/NewsList";
 import { isAuthenticated } from "./utils/auth";
 
 const PrivateRoute = ({ children }) => {
