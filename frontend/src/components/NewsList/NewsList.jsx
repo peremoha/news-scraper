@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { logout } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
-import NewsModal from "../NewsModal";
+import NewsModal from "../NewsModal/NewsModal";
 
 import { Wrapper, NewsContainer, NewsWrapper, Title, Date, ReadMoreBtn, UserNameWrapper, UserNameText } from './NewsList_Styled'
 import { Button } from "../../shared-components/Button/Button_Styled";
