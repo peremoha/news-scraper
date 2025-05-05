@@ -1,4 +1,5 @@
 import bcrypt
+from datetime import timedelta
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_graphql import GraphQLView
@@ -203,7 +204,7 @@ def login():
     if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
         return jsonify({"msg": "Invalid username or password"}), 401
 
-    access_token = create_access_token(identity=username)
+    access_token = create_access_token(identity=username, expires_delta=timedelta(days=1))
     return jsonify({"access_token": access_token}), 200
 
 @app.route("/get-role", methods=["GET"])
