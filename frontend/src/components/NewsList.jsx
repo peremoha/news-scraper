@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { logout } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
+import NewsModal from "./NewsModal";
 
 // GraphQL-запити та мутації
 const GET_NEWS = gql`
@@ -44,6 +45,19 @@ const NewsList = () => {
     navigate("/login"); // Переходимо на сторінку логіну
   };
 
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [initialData, setInitialData] = useState(null);
+
+  const openModalForCreate = () => {
+    setInitialData(null); // Немає початкових даних (додавання)
+    setModalOpen(true);
+  };
+
+  const openModalForEdit = (news) => {
+    setInitialData(news); // Передаємо початкові дані для редагування
+    setModalOpen(true);
+  };
+
   const handleDelete = (id) => {
     deleteNews({ variables: { id } });
   };
@@ -74,7 +88,7 @@ const NewsList = () => {
       {role === "admin" && (
         <button
           style={{ marginBottom: "10px", padding: "5px 10px" }}
-          onClick={() => alert("Open Add Modal")}
+          onClick={openModalForCreate}
         >
           Add News
         </button>
@@ -96,7 +110,7 @@ const NewsList = () => {
               <div style={{ marginTop: "10px" }}>
                 <button
                   style={{ marginRight: "10px", padding: "5px 10px" }}
-                  onClick={() => alert("Open Edit Modal")}
+                  onClick={() => openModalForEdit(news)}
                 >
                   Edit
                 </button>
@@ -123,6 +137,13 @@ const NewsList = () => {
           Next
         </button>
       </div>
+
+      <NewsModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        initialData={initialData}
+        refetch={refetch}
+      />
     </div>
   );
 };
