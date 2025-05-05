@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, gql, useMutation } from "@apollo/client";
 import { logout } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
 
-// Запит для отримання всіх новин
+// GraphQL-запити та мутації
 const GET_NEWS = gql`
   query GetNews($limit: Int, $offset: Int) {
     allNews(limit: $limit, offset: $offset) {
@@ -15,19 +15,37 @@ const GET_NEWS = gql`
   }
 `;
 
+const DELETE_NEWS = gql`
+  mutation DeleteNews($id: Int!) {
+    deleteNews(id: $id) {
+      ok
+    }
+  }
+`;
+
 const NewsList = () => {
   const navigate = useNavigate();
+  const role = localStorage.getItem("role"); // Отримуємо роль із LocalStorage
   const [page, setPage] = useState(1);
   const limit = 7;
   const offset = (page - 1) * limit;
 
-  const { loading, error, data } = useQuery(GET_NEWS, {
+  const { loading, error, data, refetch } = useQuery(GET_NEWS, {
     variables: { limit, offset },
   });
 
+  const [deleteNews] = useMutation(DELETE_NEWS, {
+    onCompleted: () => refetch(),
+  }); // Видалення новин з перезапитом
+
   const handleLogout = () => {
+    localStorage.removeItem("role");
     logout();
     navigate("/login"); // Переходимо на сторінку логіну
+  };
+
+  const handleDelete = (id) => {
+    deleteNews({ variables: { id } });
   };
 
   if (loading) return <p>Loading news...</p>;
@@ -51,6 +69,17 @@ const NewsList = () => {
         Logout
       </button>
       <h1>Welcome to News List - Page {page}</h1>
+
+      {/* Кнопка для додавання новин (тільки для admin) */}
+      {role === "admin" && (
+        <button
+          style={{ marginBottom: "10px", padding: "5px 10px" }}
+          onClick={() => alert("Open Add Modal")}
+        >
+          Add News
+        </button>
+      )}
+
       <div>
         {data.allNews.map((news) => (
           <div key={news.id} style={{ marginBottom: "20px" }}>
@@ -61,6 +90,24 @@ const NewsList = () => {
             <a href={news.sourceUrl} target="_blank" rel="noopener noreferrer">
               Read more
             </a>
+
+            {/* Кнопки для редагування та видалення (тільки для admin) */}
+            {role === "admin" && (
+              <div style={{ marginTop: "10px" }}>
+                <button
+                  style={{ marginRight: "10px", padding: "5px 10px" }}
+                  onClick={() => alert("Open Edit Modal")}
+                >
+                  Edit
+                </button>
+                <button
+                  style={{ padding: "5px 10px" }}
+                  onClick={() => handleDelete(news.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

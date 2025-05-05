@@ -22,7 +22,18 @@ const Login = () => {
 
       if (response.ok) {
         const data = await response.json();
+
+        const roleResponse = await fetch("http://127.0.0.1:5000/get-role", {
+          headers: {
+            Authorization: `Bearer ${data.access_token}`,
+          },
+        });
+        
+        const roleData = await roleResponse.json();
+
         localStorage.setItem("token", data.access_token);
+        localStorage.setItem("role", roleData.role); 
+
         navigate("/");
       } else {
         const errorData = await response.json();

@@ -206,6 +206,15 @@ def login():
     access_token = create_access_token(identity=username)
     return jsonify({"access_token": access_token}), 200
 
+@app.route("/get-role", methods=["GET"])
+@jwt_required()
+def get_role():
+    current_user = get_jwt_identity()
+    session = Session()
+    user = session.query(User).filter(User.username == current_user).first()
+    if not user:
+        return jsonify({"role": None}), 404
+    return jsonify({"role": user.role}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
