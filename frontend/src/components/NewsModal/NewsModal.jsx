@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, gql } from "@apollo/client";
 
+import { ModalOverlay, ModalContainer, Form, ModalTitle, Field, ButtonContainer } from './NewsModal_Styled'
+
+import Button from '../../shared-components/Button/Button'
+
 // GraphQL мутації
 const CREATE_NEWS = gql`
   mutation CreateNews($title: String!, $body: String, $publicationDate: String!, $sourceUrl: String!) {
@@ -74,80 +78,57 @@ const NewsModal = ({ isOpen, onClose, initialData, refetch }) => {
     if (!isOpen) return null;
 
     return (
-        <div style={modalStyle}>
-            <form onSubmit={handleSubmit} style={formStyle}>
-                <h2>{isEdit ? "Edit News" : "Add News"}</h2>
-                <div style={fieldStyle}>
-                    <label>Title:</label>
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                    />
-                </div>
-                <div style={fieldStyle}>
-                    <label>Body:</label>
-                    <textarea
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                    ></textarea>
-                </div>
-                <div style={fieldStyle}>
-                    <label>Publication Date:</label>
-                    <input
-                        type="date"
-                        value={publicationDate}
-                        onChange={(e) => setPublicationDate(e.target.value)}
-                        required
-                    />
-                </div>
-                <div style={fieldStyle}>
-                    <label>Source URL:</label>
-                    <input
-                        type="url"
-                        value={sourceUrl}
-                        onChange={(e) => setSourceUrl(e.target.value)}
-                        required
-                    />
-                </div>
-                <div style={{ textAlign: "right" }}>
-                    <button type="button" onClick={onClose} style={buttonStyle}>
-                        Cancel
-                    </button>
-                    <button type="submit" style={buttonStyle}>
-                        {isEdit ? "Update" : "Create"}
-                    </button>
-                </div>
-            </form>
-        </div>
+        <ModalOverlay>
+            <ModalContainer >
+                <Form onSubmit={handleSubmit} >
+                    <ModalTitle>{isEdit ? "Edit News" : "Add News"}</ModalTitle>
+                    <Field >
+                        <label>Title:</label>
+                        <input
+                            type="text"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            required
+                        />
+                    </Field>
+                    <Field >
+                        <label>Body:</label>
+                        <textarea
+                            value={body}
+                            onChange={(e) => setBody(e.target.value)}
+                        ></textarea>
+                    </Field>
+                    <Field >
+                        <label>Publication Date:</label>
+                        <input
+                            type="date"
+                            value={publicationDate}
+                            onChange={(e) => setPublicationDate(e.target.value)}
+                            required
+                        />
+                    </Field>
+                    <Field >
+                        <label>Source URL:</label>
+                        <input
+                            type="url"
+                            value={sourceUrl}
+                            onChange={(e) => setSourceUrl(e.target.value)}
+                            required
+                        />
+                    </Field>
+                    <ButtonContainer >
+                        <Button variant="danger" type="button" onClick={onClose} >
+                            Cancel
+                        </Button>
+                        <Button variant="success" type="submit" >
+                            {isEdit ? "Update" : "Create"}
+                        </Button>
+                    </ButtonContainer>
+                </Form>
+            </ModalContainer>
+        </ModalOverlay>
+
     );
-};
-
-const modalStyle = {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    background: "white",
-    padding: "20px",
-    boxShadow: "0 0 10px rgba(0,0,0,0.3)",
-    borderRadius: "10px",
-};
-
-const formStyle = {
-    display: "flex",
-    flexDirection: "column",
-};
-
-const fieldStyle = {
-    marginBottom: "15px",
-};
-
-const buttonStyle = {
-    padding: "10px 15px",
-    marginLeft: "10px",
-    cursor: "pointer",
 };
 
 export default NewsModal;

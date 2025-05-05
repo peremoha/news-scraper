@@ -13,6 +13,7 @@ const GET_NEWS = gql`
     allNews(limit: $limit, offset: $offset) {
       id
       title
+      body
       publicationDate
       sourceUrl
     }
@@ -109,6 +110,7 @@ const NewsList = () => {
         {data.allNews.map((news) => (
           <NewsWrapper key={news.id}>
             <Title>{news.title}</Title>
+            {/* <div>{news.body}</div> */}
             <Date>
               <strong>Date:</strong> {news.publicationDate}
             </Date>
