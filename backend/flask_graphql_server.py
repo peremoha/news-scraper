@@ -63,6 +63,14 @@ class CreateNews(Mutation):
     @jwt_required()  # Додаємо авторизацію
     def mutate(parent, info, title, body, publication_date, source_url):
         session = Session()
+        current_user = get_jwt_identity()  # Отримання username із JWT токену
+        user = session.query(User).filter(User.username == current_user).first()
+
+        # Перевірка ролі
+        if not user or user.role != "admin":
+            raise Exception("Permission denied! Only admin can create news.")
+
+        # Створення новини
         new_news = News(
             title=title,
             body=body,
@@ -84,10 +92,18 @@ class UpdateNews(Mutation):
 
     news = Field(NewsType)
 
+    @jwt_required()  # Авторизація через JWT
     def mutate(parent, info, id, title=None, body=None, publication_date=None, source_url=None):
         session = Session()
+        current_user = get_jwt_identity()  # Отримання username із JWT токену
+        user = session.query(User).filter(User.username == current_user).first()
+
+        # Перевірка ролі
+        if not user or user.role != "admin":
+            raise Exception("Permission denied! Only admin can update news.")
 
         # Перевіряємо, чи існує запис у базі
+        # Оновлення
         existing_news = session.query(News).filter(News.id == id).first()
         if not existing_news:
             raise Exception(f"News item with ID {id} not found!")
@@ -113,10 +129,18 @@ class DeleteNews(Mutation):
 
     ok = String()
 
+    @jwt_required()  # Авторизація через JWT
     def mutate(parent, info, id):
         session = Session()
+        current_user = get_jwt_identity()  # Отримання username із JWT токену
+        user = session.query(User).filter(User.username == current_user).first()
 
+        # Перевірка ролі
+        if not user or user.role != "admin":
+            raise Exception("Permission denied! Only admin can delete news.")
+        
         # Перевіряємо, чи існує запис у базі
+        # Видалення
         existing_news = session.query(News).filter(News.id == id).first()
         if not existing_news:
             raise Exception(f"News item with ID {id} not found!")
@@ -126,6 +150,7 @@ class DeleteNews(Mutation):
         session.commit()
 
         return DeleteNews(ok=f"News item with ID {id} deleted successfully!")
+
 class Mutation(ObjectType):
     create_news = CreateNews.Field()
     update_news = UpdateNews.Field()
@@ -146,7 +171,8 @@ def register():
     data = request.json
     username = data.get("username")
     password = data.get("password")  # Отримуємо пароль для хешування
-
+    role = data.get("role", "user")  # За замовчуванням "user"
+    
     if session.query(User).filter(User.username == username).first():
         return jsonify({"msg": "Username already exists"}), 400
 
@@ -154,11 +180,12 @@ def register():
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
     # Зберігаємо хешований пароль у базу даних
-    new_user = User(username=username, password=hashed_password.decode("utf-8"))
+    # Створюємо нового користувача за вказаною або дефолтною роллю
+    new_user = User(username=username, password=hashed_password.decode("utf-8"), role=role)
     session.add(new_user)
     session.commit()
 
-    return jsonify({"msg": "User registered successfully!"}), 200
+    return jsonify({"msg": f"User registered successfully with role {role}!"}), 200
 
 
 @app.route("/login", methods=["POST"])
