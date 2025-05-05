@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { isAuthenticated } from "../../utils/auth";
 
 import {
   PageContainer,
@@ -19,6 +20,12 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+    useEffect(() => {
+      if (isAuthenticated()) {
+        navigate("/"); // Якщо є токен, перенаправляємо на сторінку новин
+      }
+    }, [navigate]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -68,7 +75,7 @@ const Register = () => {
             required
           />
         </FormField>
-        <Button type="submit" >Register</Button>
+        <Button variant="primary" type="submit" >Register</Button>
       </FormContainer >
       {error && <ErrorMessage >{error}</ErrorMessage>}
       {success && <SuccessMessage >{success}</SuccessMessage>}

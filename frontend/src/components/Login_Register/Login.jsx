@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom"; // Додали Link для переходу
+import { isAuthenticated } from "../../utils/auth";
 
 import {
   PageContainer,
@@ -17,6 +18,12 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate("/"); // Якщо є токен, перенаправляємо на сторінку новин
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -78,7 +85,7 @@ const Login = () => {
             required
           />
         </FormField>
-        <Button type="submit">Login</Button>
+        <Button variant="primary" type="submit">Login</Button>
       </FormContainer>
       {error && <ErrorMessage >{error}</ErrorMessage>}
       <LinkText>
