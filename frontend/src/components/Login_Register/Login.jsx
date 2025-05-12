@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom"; // Додали Link для переходу
+import { useNavigate, Link } from "react-router-dom"; 
 import { isAuthenticated } from "../../utils/auth";
 
 import {
@@ -21,7 +21,7 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated()) {
-      navigate("/"); // Якщо є токен, перенаправляємо на сторінку новин
+      navigate("/"); 
     }
   }, [navigate]);
 

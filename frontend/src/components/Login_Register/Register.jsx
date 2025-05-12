@@ -15,7 +15,7 @@ import {
 import Button from '../../shared-components/Button/Button'
 
 const Register = () => {
-  const navigate = useNavigate(); // Хук для переходу після успішної реєстрації
+  const navigate = useNavigate(); 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,14 +23,14 @@ const Register = () => {
 
     useEffect(() => {
       if (isAuthenticated()) {
-        navigate("/"); // Якщо є токен, перенаправляємо на сторінку новин
+        navigate("/"); 
       }
     }, [navigate]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError("");  // Скидає помилки перед новою спробою
-    setSuccess("");  // Скидає попереднє повідомлення успіху
+    setError(""); 
+    setSuccess("");  
 
     try {
       const response = await fetch("http://127.0.0.1:5000/register", {
@@ -43,7 +43,7 @@ const Register = () => {
 
       if (response.ok) {
         setSuccess("Registration successful! Redirecting to login...");
-        setTimeout(() => navigate("/login"), 2000); // Через 2 секунди перенаправляємо на логін
+        setTimeout(() => navigate("/login"), 2000); 
       } else {
         const data = await response.json();
         setError(data.msg || "Error occurred during registration.");

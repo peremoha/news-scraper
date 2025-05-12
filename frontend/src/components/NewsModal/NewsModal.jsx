@@ -5,7 +5,6 @@ import { ModalOverlay, ModalContainer, Form, ModalTitle, Field, ButtonContainer 
 
 import Button from '../../shared-components/Button/Button'
 
-// GraphQL мутації
 const CREATE_NEWS = gql`
   mutation CreateNews($title: String!, $body: String, $publicationDate: String!, $sourceUrl: String!) {
     createNews(title: $title, body: $body, publicationDate: $publicationDate, sourceUrl: $sourceUrl) {
@@ -34,7 +33,7 @@ const NewsModal = ({ isOpen, onClose, initialData, refetch }) => {
     const [publicationDate, setPublicationDate] = useState("");
     const [sourceUrl, setSourceUrl] = useState("");
 
-    const [isEdit, setIsEdit] = useState(false); // Чи це режим редагування?
+    const [isEdit, setIsEdit] = useState(false); 
 
     const [createNews] = useMutation(CREATE_NEWS, {
         onCompleted: () => {

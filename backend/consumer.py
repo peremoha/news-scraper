@@ -4,9 +4,6 @@ from db.database import Session
 from db.models import News
 
 def save_to_database(data):
-    """
-    Зберігає новини в базу даних.
-    """
     session = Session()
     for item in data:
         news = News(
@@ -20,18 +17,12 @@ def save_to_database(data):
     print("[x] Новини збережено в базу даних")
 
 def callback(ch, method, properties, body):
-    """
-    Обробляє повідомлення RabbitMQ.
-    """
     print("[x] Отримано повідомлення")
     data = json.loads(body)
     save_to_database(data)
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def start_consumer():
-    """
-    Запускає RabbitMQ Consumer.
-    """
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
     channel = connection.channel()
     channel.queue_declare(queue="news_queue")

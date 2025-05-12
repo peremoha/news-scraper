@@ -6,7 +6,7 @@ from flask_graphql import GraphQLView
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from graphene import ObjectType, Schema, String, List, Field, Int, Mutation
 from db.database import Session
-from db.models import News, User  # Таблиця новин та таблиця користувачів
+from db.models import News, User 
 
 # -------------------------------
 # Flask Application Setup
@@ -27,21 +27,18 @@ class NewsType(ObjectType):
     source_url = String()
 
 
-# Запити (Query)
 class Query(ObjectType):
-    # Отримання всіх новин із пагінацією
     all_news = List(
         NewsType,
         limit=Int(),
         offset=Int()
     )
 
-    @jwt_required()  # Додаємо авторизацію
+    @jwt_required() 
     def resolve_all_news(parent, info, limit=None, offset=None):
         session = Session()
         query = session.query(News)
 
-        # Додаємо обмеження (пагінацію)
         if limit is not None:
             query = query.limit(limit)
         if offset is not None:
@@ -61,17 +58,15 @@ class CreateNews(Mutation):
 
     news = Field(NewsType)
 
-    @jwt_required()  # Додаємо авторизацію
+    @jwt_required() 
     def mutate(parent, info, title, body, publication_date, source_url):
         session = Session()
-        current_user = get_jwt_identity()  # Отримання username із JWT токену
+        current_user = get_jwt_identity()  
         user = session.query(User).filter(User.username == current_user).first()
 
-        # Перевірка ролі
         if not user or user.role != "admin":
             raise Exception("Permission denied! Only admin can create news.")
 
-        # Створення новини
         new_news = News(
             title=title,
             body=body,
@@ -93,25 +88,21 @@ class UpdateNews(Mutation):
 
     news = Field(NewsType)
 
-    @jwt_required()  # Авторизація через JWT
+    @jwt_required()  
     def mutate(parent, info, id, title=None, body=None, publication_date=None, source_url=None):
         session = Session()
-        current_user = get_jwt_identity()  # Отримання username із JWT токену
+        current_user = get_jwt_identity()  
         user = session.query(User).filter(User.username == current_user).first()
 
-        # Перевірка ролі
         if not user or user.role != "admin":
             raise Exception("Permission denied! Only admin can update news.")
 
-        # Перевіряємо, чи існує запис у базі
-        # Оновлення
         existing_news = session.query(News).filter(News.id == id).first()
         if not existing_news:
             raise Exception(f"News item with ID {id} not found!")
 
-        # Оновлення полів, якщо вони передані
         if title is not None:
-            existing_news.title = title.strip()  # Очистка від пробілів
+            existing_news.title = title.strip() 
         if body is not None:
             existing_news.body = body.strip()
         if publication_date is not None:
@@ -119,7 +110,6 @@ class UpdateNews(Mutation):
         if source_url is not None:
             existing_news.source_url = source_url.strip()
 
-        # Збереження змін
         session.commit()
 
         return UpdateNews(news=existing_news)
@@ -130,23 +120,19 @@ class DeleteNews(Mutation):
 
     ok = String()
 
-    @jwt_required()  # Авторизація через JWT
+    @jwt_required()  
     def mutate(parent, info, id):
         session = Session()
-        current_user = get_jwt_identity()  # Отримання username із JWT токену
+        current_user = get_jwt_identity()  
         user = session.query(User).filter(User.username == current_user).first()
 
-        # Перевірка ролі
         if not user or user.role != "admin":
             raise Exception("Permission denied! Only admin can delete news.")
         
-        # Перевіряємо, чи існує запис у базі
-        # Видалення
         existing_news = session.query(News).filter(News.id == id).first()
         if not existing_news:
             raise Exception(f"News item with ID {id} not found!")
 
-        # Видаляємо запис
         session.delete(existing_news)
         session.commit()
 
@@ -171,17 +157,14 @@ def register():
     session = Session()
     data = request.json
     username = data.get("username")
-    password = data.get("password")  # Отримуємо пароль для хешування
-    role = data.get("role", "user")  # За замовчуванням "user"
+    password = data.get("password")  
+    role = data.get("role", "user") 
     
     if session.query(User).filter(User.username == username).first():
         return jsonify({"msg": "Username already exists"}), 400
 
-    # Хешуємо пароль
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
-    # Зберігаємо хешований пароль у базу даних
-    # Створюємо нового користувача за вказаною або дефолтною роллю
     new_user = User(username=username, password=hashed_password.decode("utf-8"), role=role)
     session.add(new_user)
     session.commit()
@@ -200,7 +183,6 @@ def login():
     if not user:
         return jsonify({"msg": "Invalid username or password"}), 401
 
-    # Перевіряємо пароль шляхом порівняння з хешем
     if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
         return jsonify({"msg": "Invalid username or password"}), 401
 

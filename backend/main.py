@@ -9,14 +9,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
 def scrape_news(query):
-    """
-    Збирає новини з веб-ресурсу Ask.com.
-    Args:
-        query (str): Пошуковий запит.
-
-    Returns:
-        list: Список новин [{title: ..., body: ..., publication_date: ..., source_url: ...}]
-    """
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
     try:
         driver.get("https://www.ask.com/")
@@ -53,12 +45,6 @@ def scrape_news(query):
         driver.quit()
 
 def send_to_rabbitmq(queue_name, data):
-    """
-    Надсилає дані у RabbitMQ.
-    Args:
-        queue_name (str): Назва черги.
-        data (list): Дані, які потрібно надіслати.
-    """
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
     channel = connection.channel()
     channel.queue_declare(queue=queue_name)

@@ -7,7 +7,6 @@ import NewsModal from "../NewsModal/NewsModal";
 import { Wrapper, NewsContainer, NewsWrapper, Title, Date, ReadMoreBtn, UserNameWrapper, UserNameText } from './NewsList_Styled'
 import { Button } from "../../shared-components/Button/Button_Styled";
 
-// GraphQL-запити та мутації
 const GET_NEWS = gql`
   query GetNews($limit: Int, $offset: Int) {
     allNews(limit: $limit, offset: $offset) {
@@ -30,7 +29,7 @@ const DELETE_NEWS = gql`
 
 const NewsList = () => {
   const navigate = useNavigate();
-  const role = localStorage.getItem("role"); // Отримуємо роль із LocalStorage
+  const role = localStorage.getItem("role"); 
   const username = localStorage.getItem("username");
   const [page, setPage] = useState(1);
   const limit = 7;
@@ -42,24 +41,24 @@ const NewsList = () => {
 
   const [deleteNews] = useMutation(DELETE_NEWS, {
     onCompleted: () => refetch(),
-  }); // Видалення новин з перезапитом
+  });
 
   const handleLogout = () => {
     localStorage.removeItem("role");
     logout();
-    navigate("/login"); // Переходимо на сторінку логіну
+    navigate("/login"); 
   };
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [initialData, setInitialData] = useState(null);
 
   const openModalForCreate = () => {
-    setInitialData(null); // Немає початкових даних (додавання)
+    setInitialData(null); 
     setModalOpen(true);
   };
 
   const openModalForEdit = (news) => {
-    setInitialData(news); // Передаємо початкові дані для редагування
+    setInitialData(news); 
     setModalOpen(true);
   };
 
@@ -95,7 +94,6 @@ const NewsList = () => {
 
       <h1>Welcome to News List - Page {page}</h1>
 
-      {/* Кнопка для додавання новин (тільки для admin) */}
       {role === "admin" && (
         <Button
           style={{ marginBottom: "10px" }}
@@ -118,7 +116,6 @@ const NewsList = () => {
               Read more
             </ReadMoreBtn>
 
-            {/* Кнопки для редагування та видалення (тільки для admin) */}
             {role === "admin" && (
               <div style={{ marginTop: "10px" }}>
                 <Button
