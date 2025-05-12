@@ -184,5 +184,3 @@ python main.py
    - Кнопки "Add News", "Edit", "Delete" не відображаються.
 
 ---
-
-
