@@ -44,7 +44,6 @@ const NewsList = () => {
   });
 
   const handleLogout = () => {
-    localStorage.removeItem("role");
     logout();
     navigate("/login"); 
   };
